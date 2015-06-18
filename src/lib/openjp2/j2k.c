@@ -5067,7 +5067,7 @@ OPJ_BOOL opj_j2k_read_unk (     opj_j2k_t *p_j2k,
         while(1) {
                 /* Try to read 2 bytes (the next marker ID) from stream and copy them into the buffer*/
                 if (opj_stream_read_data(p_stream,p_j2k->m_specific_param.m_decoder.m_header_data,2,p_manager) != 2) {
-                        opj_event_msg(p_manager, EVT_ERROR, "Stream too short\n");
+                        opj_event_msg(p_manager, EVT_ERROR, "Stream too short - %s, line %d\n",__FILE__, __LINE__);
                         return OPJ_FALSE;
                 }
 
@@ -7165,7 +7165,7 @@ OPJ_BOOL opj_j2k_read_header_procedure( opj_j2k_t *p_j2k,
 
         /* Try to read 2 bytes (the next marker ID) from stream and copy them into the buffer */
         if (opj_stream_read_data(p_stream,p_j2k->m_specific_param.m_decoder.m_header_data,2,p_manager) != 2) {
-                opj_event_msg(p_manager, EVT_ERROR, "Stream too short\n");
+                opj_event_msg(p_manager, EVT_ERROR, "Stream too short - %s, line %d\n",__FILE__, __LINE__);
                 return OPJ_FALSE;
         }
 
@@ -7218,7 +7218,7 @@ OPJ_BOOL opj_j2k_read_header_procedure( opj_j2k_t *p_j2k,
 
                 /* Try to read 2 bytes (the marker size) from stream and copy them into the buffer */
                 if (opj_stream_read_data(p_stream,p_j2k->m_specific_param.m_decoder.m_header_data,2,p_manager) != 2) {
-                        opj_event_msg(p_manager, EVT_ERROR, "Stream too short\n");
+                        opj_event_msg(p_manager, EVT_ERROR, "Stream too short - %s, line %d\n",__FILE__, __LINE__);
                         return OPJ_FALSE;
                 }
 
@@ -7242,7 +7242,7 @@ OPJ_BOOL opj_j2k_read_header_procedure( opj_j2k_t *p_j2k,
 
                 /* Try to read the rest of the marker segment from stream and copy them into the buffer */
                 if (opj_stream_read_data(p_stream,p_j2k->m_specific_param.m_decoder.m_header_data,l_marker_size,p_manager) != l_marker_size) {
-                        opj_event_msg(p_manager, EVT_ERROR, "Stream too short\n");
+                        opj_event_msg(p_manager, EVT_ERROR, "Stream too short - %s, line %d\n",__FILE__, __LINE__);
                         return OPJ_FALSE;
                 }
 
@@ -7264,7 +7264,7 @@ OPJ_BOOL opj_j2k_read_header_procedure( opj_j2k_t *p_j2k,
 
                 /* Try to read 2 bytes (the next marker ID) from stream and copy them into the buffer */
                 if (opj_stream_read_data(p_stream,p_j2k->m_specific_param.m_decoder.m_header_data,2,p_manager) != 2) {
-                        opj_event_msg(p_manager, EVT_ERROR, "Stream too short\n");
+                        opj_event_msg(p_manager, EVT_ERROR, "Stream too short - %s, line %d\n",__FILE__, __LINE__);
                         return OPJ_FALSE;
                 }
 
@@ -7690,6 +7690,8 @@ OPJ_BOOL opj_j2k_read_tile_header(      opj_j2k_t * p_j2k,
                                                                     opj_stream_private_t *p_stream,
                                                                     opj_event_mgr_t * p_manager )
 {
+
+    
         OPJ_UINT32 l_current_marker = J2K_MS_SOT;
         OPJ_UINT32 l_marker_size;
         const opj_dec_memory_marker_handler_t * l_marker_handler = 00;
@@ -7724,7 +7726,7 @@ OPJ_BOOL opj_j2k_read_tile_header(      opj_j2k_t * p_j2k,
 
                         /* Try to read 2 bytes (the marker size) from stream and copy them into the buffer */
                         if (opj_stream_read_data(p_stream,p_j2k->m_specific_param.m_decoder.m_header_data,2,p_manager) != 2) {
-                                opj_event_msg(p_manager, EVT_ERROR, "Stream too short\n");
+                                opj_event_msg(p_manager, EVT_ERROR, "Stream too short - %s, line %d\n",__FILE__, __LINE__);
                                 return OPJ_FALSE;
                         }
 
@@ -7782,7 +7784,7 @@ OPJ_BOOL opj_j2k_read_tile_header(      opj_j2k_t * p_j2k,
 
                         /* Try to read the rest of the marker segment from stream and copy them into the buffer */
                         if (opj_stream_read_data(p_stream,p_j2k->m_specific_param.m_decoder.m_header_data,l_marker_size,p_manager) != l_marker_size) {
-                                opj_event_msg(p_manager, EVT_ERROR, "Stream too short\n");
+                                opj_event_msg(p_manager, EVT_ERROR, "Stream too short - %s, line %d\n",__FILE__, __LINE__);
                                 return OPJ_FALSE;
                         }
 
@@ -7819,7 +7821,7 @@ OPJ_BOOL opj_j2k_read_tile_header(      opj_j2k_t * p_j2k,
                         if (p_j2k->m_specific_param.m_decoder.m_skip_data) {
                                 /* Skip the rest of the tile part header*/
                                 if (opj_stream_skip(p_stream,p_j2k->m_specific_param.m_decoder.m_sot_length,p_manager) != p_j2k->m_specific_param.m_decoder.m_sot_length) {
-                                        opj_event_msg(p_manager, EVT_ERROR, "Stream too short\n");
+                                        opj_event_msg(p_manager, EVT_ERROR, "Stream too short - %s, line %d\n",__FILE__, __LINE__);
                                         return OPJ_FALSE;
                                 }
                                 l_current_marker = J2K_MS_SOD; /* Normally we reached a SOD */
@@ -7827,16 +7829,18 @@ OPJ_BOOL opj_j2k_read_tile_header(      opj_j2k_t * p_j2k,
                         else {
                                 /* Try to read 2 bytes (the next marker ID) from stream and copy them into the buffer*/
                                 if (opj_stream_read_data(p_stream,p_j2k->m_specific_param.m_decoder.m_header_data,2,p_manager) != 2) {
-                                        opj_event_msg(p_manager, EVT_ERROR, "Stream too short\n");
+                                        opj_event_msg(p_manager, EVT_ERROR, "Stream too short - %s, line %d\n",__FILE__, __LINE__);
                                         return OPJ_FALSE;
                                 }
                                 /* Read 2 bytes from the buffer as the new marker ID */
                                 opj_read_bytes(p_j2k->m_specific_param.m_decoder.m_header_data,&l_current_marker,2);
                         }
                 }
-                if(opj_stream_get_number_byte_left(p_stream) == 0
-                    && p_j2k->m_specific_param.m_decoder.m_state == J2K_STATE_NEOC)
+            
+                if(opj_stream_get_number_byte_left(p_stream) == 0 && p_j2k->m_specific_param.m_decoder.m_state == J2K_STATE_NEOC)
+                {
                     break;
+                }
 
                 /* If we didn't skip data before, we need to read the SOD marker*/
                 if (! p_j2k->m_specific_param.m_decoder.m_skip_data) {
@@ -7848,12 +7852,15 @@ OPJ_BOOL opj_j2k_read_tile_header(      opj_j2k_t * p_j2k,
                         if (! p_j2k->m_specific_param.m_decoder.m_can_decode){
                                 /* Try to read 2 bytes (the next marker ID) from stream and copy them into the buffer */
                                 if (opj_stream_read_data(p_stream,p_j2k->m_specific_param.m_decoder.m_header_data,2,p_manager) != 2) {
-                                        opj_event_msg(p_manager, EVT_ERROR, "Stream too short\n");
-                                        return OPJ_FALSE;
+                                        opj_event_msg(p_manager, EVT_ERROR, "Stream too short - %s, line %d\n",__FILE__, __LINE__);
+                                        //return OPJ_FALSE;
+                                        l_current_marker = J2K_MS_EOC;
                                 }
-
-                                /* Read 2 bytes from buffer as the new marker ID */
-                                opj_read_bytes(p_j2k->m_specific_param.m_decoder.m_header_data,&l_current_marker,2);
+                                else
+                                {
+                                    /* Read 2 bytes from buffer as the new marker ID */
+                                    opj_read_bytes(p_j2k->m_specific_param.m_decoder.m_header_data,&l_current_marker,2);
+                                }
                         }
                 }
                 else {
@@ -7864,12 +7871,15 @@ OPJ_BOOL opj_j2k_read_tile_header(      opj_j2k_t * p_j2k,
 
                         /* Try to read 2 bytes (the next marker ID) from stream and copy them into the buffer */
                         if (opj_stream_read_data(p_stream,p_j2k->m_specific_param.m_decoder.m_header_data,2,p_manager) != 2) {
-                                opj_event_msg(p_manager, EVT_ERROR, "Stream too short\n");
-                                return OPJ_FALSE;
+                                opj_event_msg(p_manager, EVT_ERROR, "Stream too short - %s, line %d\n",__FILE__, __LINE__);
+                                //return OPJ_FALSE;
+                                l_current_marker = J2K_MS_EOC;
                         }
-
-                        /* Read 2 bytes from buffer as the new marker ID */
-                        opj_read_bytes(p_j2k->m_specific_param.m_decoder.m_header_data,&l_current_marker,2);
+                        else
+                        {
+                            /* Read 2 bytes from buffer as the new marker ID */
+                            opj_read_bytes(p_j2k->m_specific_param.m_decoder.m_header_data,&l_current_marker,2);
+                        }
                 }
         }
 
@@ -7978,7 +7988,7 @@ OPJ_BOOL opj_j2k_decode_tile (  opj_j2k_t * p_j2k,
 
         if (p_j2k->m_specific_param.m_decoder.m_state != 0x0100){ /*FIXME J2K_DEC_STATE_EOC)*/
                 if (opj_stream_read_data(p_stream,l_data,2,p_manager) != 2) {
-                        opj_event_msg(p_manager, EVT_ERROR, "Stream too short\n");
+                        opj_event_msg(p_manager, EVT_ERROR, "Stream too short - %s, line %d\n",__FILE__, __LINE__);
                         return OPJ_FALSE;
                 }
 
@@ -7995,7 +8005,7 @@ OPJ_BOOL opj_j2k_decode_tile (  opj_j2k_t * p_j2k,
                             opj_event_msg(p_manager, EVT_WARNING, "Stream does not end with EOC\n");
                             return OPJ_TRUE;
                         }
-                        opj_event_msg(p_manager, EVT_ERROR, "Stream too short, expected SOT\n");
+                        opj_event_msg(p_manager, EVT_ERROR, "Stream too short, expected SOT - %s, line %d\n",__FILE__, __LINE__);
                         return OPJ_FALSE;
                 }
         }

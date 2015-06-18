@@ -1039,11 +1039,19 @@ typedef struct opj_jp2_index {
 
 } opj_jp2_index_t;
 
+typedef struct opj_buffer_info
+{
+    OPJ_BYTE *buf;
+    OPJ_BYTE *cur;
+    OPJ_SIZE_T len;
+    
+} opj_buffer_info_t;
 
 #ifdef __cplusplus
 extern "C" {
 #endif
 
+OPJ_API opj_stream_t* OPJ_CALLCONV opj_stream_create_buffer_stream(opj_buffer_info_t* p_source_buffer,OPJ_BOOL p_is_read_stream);    
 
 /* 
 ==========================================================

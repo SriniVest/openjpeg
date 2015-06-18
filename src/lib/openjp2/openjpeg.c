@@ -957,3 +957,84 @@ opj_stream_t* OPJ_CALLCONV opj_stream_create_file_stream (
 
     return l_stream;
 }
+
+
+static OPJ_SIZE_T opj_read_from_buffer(void * p_buffer,
+    OPJ_SIZE_T p_nb_bytes, opj_buffer_info_t* p_source_buffer)
+{
+    OPJ_UINT32 l_nb_read;
+    
+    if(p_source_buffer->cur + p_nb_bytes < p_source_buffer->buf + p_source_buffer->len )
+   {
+    l_nb_read = p_nb_bytes;
+   }
+    else
+   {
+    l_nb_read = (OPJ_SIZE_T)(p_source_buffer->buf + p_source_buffer->len - p_source_buffer->cur);
+   }
+    memcpy(p_buffer, p_source_buffer->cur, l_nb_read);
+    p_source_buffer->cur += l_nb_read;
+    
+    return l_nb_read ? l_nb_read : ((OPJ_SIZE_T)-1);
+}
+
+static OPJ_SIZE_T opj_write_from_buffer(void * p_buffer,
+    OPJ_SIZE_T p_nb_bytes, opj_buffer_info_t* p_source_buffer)
+{
+    memcpy(p_source_buffer->cur,p_buffer, p_nb_bytes);
+    p_source_buffer->cur += p_nb_bytes;
+    p_source_buffer->len += p_nb_bytes;
+
+    return p_nb_bytes;
+}
+
+static OPJ_SIZE_T opj_skip_from_buffer(OPJ_SIZE_T p_nb_bytes,
+    opj_buffer_info_t * p_source_buffer)
+{
+    if(p_source_buffer->cur + p_nb_bytes < p_source_buffer->buf + p_source_buffer->len )
+   {
+    p_source_buffer->cur += p_nb_bytes;
+    return p_nb_bytes;
+   }
+    p_source_buffer->cur = p_source_buffer->buf + p_source_buffer->len;
+
+    return ((OPJ_SIZE_T)-1);
+}
+
+static OPJ_BOOL opj_seek_from_buffer(OPJ_SIZE_T p_nb_bytes,
+    opj_buffer_info_t * p_source_buffer)
+{
+    if(p_source_buffer->cur + p_nb_bytes < p_source_buffer->buf + p_source_buffer->len )
+   {
+    p_source_buffer->cur += p_nb_bytes;
+    return OPJ_TRUE;
+   }
+    p_source_buffer->cur = p_source_buffer->buf + p_source_buffer->len;
+
+    return OPJ_FALSE;
+}
+
+opj_stream_t* OPJ_CALLCONV opj_stream_create_buffer_stream(opj_buffer_info_t* p_source_buffer, OPJ_BOOL p_is_read_stream)
+{
+    opj_stream_t* l_stream;
+
+    if(! p_source_buffer) return NULL;
+
+    l_stream = opj_stream_default_create(p_is_read_stream);
+
+    if(! l_stream) return NULL;
+
+    opj_stream_set_user_data(l_stream, p_source_buffer,NULL);
+
+	opj_stream_set_user_data_length(l_stream, p_source_buffer->len);
+
+	//if (p_is_read_stream)
+	opj_stream_set_read_function(l_stream, (opj_stream_read_fn) opj_read_from_buffer);
+	//else
+	opj_stream_set_write_function(l_stream,(opj_stream_write_fn) opj_write_from_buffer);
+    opj_stream_set_skip_function(l_stream, (opj_stream_skip_fn) opj_skip_from_buffer);
+    opj_stream_set_seek_function(l_stream, (opj_stream_seek_fn) opj_seek_from_buffer);
+
+    return l_stream;
+}
+
