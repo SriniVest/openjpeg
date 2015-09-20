@@ -1,5 +1,7 @@
 # NON-REGRESSION TESTS ON THIS DATASET LOCATED ${OPJ_DATA_ROOT}/input/nonregression
 
+cmake_minimum_required(VERSION 2.8.7)
+
 file(MAKE_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}/Temporary)
 
 set(TEMP ${CMAKE_CURRENT_BINARY_DIR}/Temporary)
@@ -13,6 +15,8 @@ set(INPUT_CONF_PATH ${OPJ_DATA_ROOT}/input/conformance)
 
 # need kdu_expand if possible
 find_package(KAKADU)
+# need jpylyzer if possible
+find_package(JPYLYZER)
 
 #########################################################################
 # GENERATION OF THE TEST SUITE (DUMP)
@@ -334,6 +338,40 @@ foreach(OPJ_TEST_CMD_LINE ${OPJ_TEST_CMD_LINE_LIST})
                                  PROPERTIES DEPENDS
                                  NR-ENC-${INPUT_FILENAME_NAME}-${IT_TEST_ENC}-decode-ref)
 
+          endif()
+          
+          # Test the encoded file is a valid JP2 file
+          if (JPYLYZER_EXECUTABLE)
+            if (${OUTPUT_FILENAME} MATCHES "\\.jp2$")
+              add_test(NAME NR-ENC-${INPUT_FILENAME_NAME}-${IT_TEST_ENC}-jpylyser
+                COMMAND ${JPYLYZER_EXECUTABLE}
+                ${OUTPUT_FILENAME}
+                )
+              set_tests_properties(NR-ENC-${INPUT_FILENAME_NAME}-${IT_TEST_ENC}-jpylyser PROPERTIES 
+                DEPENDS NR-ENC-${INPUT_FILENAME_NAME}-${IT_TEST_ENC}-encode
+                PASS_REGULAR_EXPRESSION "<isValidJP2>True</isValidJP2>"
+                )		
+            endif()
+          endif(JPYLYZER_EXECUTABLE)
+          
+          # If lossless compression (simple test is 4 arguments), decompress & compare
+          list(LENGTH CMD_ARG_LIST_2 ARG_COUNT)
+          if (ARG_COUNT EQUAL 4)
+            # can we compare with the input image ?
+            if (${INPUT_FILENAME_NAME} MATCHES "\\.tif$")
+              add_test(NAME NR-ENC-${INPUT_FILENAME_NAME}-${IT_TEST_ENC}-lossless-decode
+                COMMAND opj_decompress -i ${OUTPUT_FILENAME} -o ${OUTPUT_FILENAME}.lossless.tif
+                )
+              set_tests_properties(NR-ENC-${INPUT_FILENAME_NAME}-${IT_TEST_ENC}-lossless-decode PROPERTIES 
+                DEPENDS NR-ENC-${INPUT_FILENAME_NAME}-${IT_TEST_ENC}-encode
+                )
+              add_test(NAME NR-ENC-${INPUT_FILENAME_NAME}-${IT_TEST_ENC}-lossless-compare
+                COMMAND compare_images -b ${INPUT_FILENAME} -t ${OUTPUT_FILENAME}.lossless.tif -n 1 -d
+                )
+              set_tests_properties(NR-ENC-${INPUT_FILENAME_NAME}-${IT_TEST_ENC}-lossless-compare PROPERTIES 
+                DEPENDS NR-ENC-${INPUT_FILENAME_NAME}-${IT_TEST_ENC}-lossless-decode
+                )	
+            endif()
           endif()
       endif()
 

@@ -3,7 +3,7 @@
 
 ## What is OpenJPEG ?
 
-OpenJPEG is an open-source JPEG 2000 codec written in C language. It has been developed in order to promote the use of [JPEG 2000](http://www.jpeg.org/jpeg2000), a still-image compression standard from the Joint Photographic Experts Group ([JPEG](http://www.jpeg.org)).  Since october 2014, it is officially recognized by ISO/IEC and ITU-T as a [JPEG 2000 Reference Software](http://www.itu.int/rec/T-REC-T.804-201504-I!Amd2).
+OpenJPEG is an open-source JPEG 2000 codec written in C language. It has been developed in order to promote the use of [JPEG 2000](http://www.jpeg.org/jpeg2000), a still-image compression standard from the Joint Photographic Experts Group ([JPEG](http://www.jpeg.org)).  Since April 2015, it is officially recognized by ISO/IEC and ITU-T as a [JPEG 2000 Reference Software](http://www.itu.int/rec/T-REC-T.804-201504-I!Amd2).
 
 ## Who can use the code ?
 
@@ -11,6 +11,11 @@ Anyone. As the OpenJPEG code is released under the [2-clauses BSD license](https
 
 ## How to install and use OpenJPEG ?
 API Documentation needs a major refactoring. Meanwhile, you can check [installation](https://github.com/uclouvain/openjpeg/wiki/Installation) instructions and [codec documentation](https://github.com/uclouvain/openjpeg/wiki/DocJ2KCodec).
+    
+## Current Status
+[![Build Status](https://travis-ci.org/uclouvain/openjpeg.svg?branch=master)](https://travis-ci.org/uclouvain/openjpeg)
+
+[![Coverity Scan Build Status](https://scan.coverity.com/projects/6383/badge.svg)](https://scan.coverity.com/projects/uclouvain-openjpeg)
     
 ## Who are the developers ?
 
