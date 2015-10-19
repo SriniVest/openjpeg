@@ -567,9 +567,11 @@ static OPJ_BOOL opj_dwt_decode_tile(opj_tcd_tilecomp_t* tilec, OPJ_UINT32 numres
 	OPJ_UINT32 rh = (OPJ_UINT32)(tr->y1 - tr->y0);	/* height of the resolution level computed */
 
 	OPJ_UINT32 w = (OPJ_UINT32)(tilec->x1 - tilec->x0);
-
-	h.mem = (OPJ_INT32*)
-	opj_aligned_malloc(opj_dwt_max_resolution(tr, numres) * sizeof(OPJ_INT32));
+	
+	if (numres == 1U) {
+		return OPJ_TRUE;
+	}
+	h.mem = (OPJ_INT32*)opj_aligned_malloc(opj_dwt_max_resolution(tr, numres) * sizeof(OPJ_INT32));
 	if (! h.mem){
 		/* FIXME event manager error callback */
 		return OPJ_FALSE;
@@ -741,8 +743,8 @@ static void opj_v4dwt_decode_step1(opj_v4_t* w, OPJ_INT32 count, const OPJ_FLOAT
 
 static void opj_v4dwt_decode_step2(opj_v4_t* l, opj_v4_t* w, OPJ_INT32 k, OPJ_INT32 m, OPJ_FLOAT32 c)
 {
-	OPJ_FLOAT32* restrict fl = (OPJ_FLOAT32*) l;
-	OPJ_FLOAT32* restrict fw = (OPJ_FLOAT32*) w;
+	OPJ_FLOAT32* fl = (OPJ_FLOAT32*) l;
+	OPJ_FLOAT32* fw = (OPJ_FLOAT32*) w;
 	OPJ_INT32 i;
 	for(i = 0; i < m; ++i){
 		OPJ_FLOAT32 tmp1_1 = fl[0];
@@ -793,7 +795,7 @@ static void opj_v4dwt_decode_step2(opj_v4_t* l, opj_v4_t* w, OPJ_INT32 k, OPJ_IN
 /* <summary>                             */
 /* Inverse 9-7 wavelet transform in 1-D. */
 /* </summary>                            */
-void opj_v4dwt_decode(opj_v4dwt_t* restrict dwt)
+static void opj_v4dwt_decode(opj_v4dwt_t* restrict dwt)
 {
 	OPJ_INT32 a, b;
 	if(dwt->cas == 0) {
